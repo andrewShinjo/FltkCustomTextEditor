@@ -3,7 +3,7 @@
 #include <FL/Fl_Box.H>
 #include <iostream>
 
-#include "./src/Editor.h"
+#include "./src/ReadOnlyEditor.h"
 
 int main(int argc, char **argv)
 {
@@ -15,7 +15,9 @@ int main(int argc, char **argv)
 
     Fl_Window *window 
         = new Fl_Window(screenWidth / 2, screenHeight / 2, "Text Editor");
-    Editor *e = new Editor(10, 10, window->w() - 2*10, window->h() - 2*10);
+    Editor *e 
+        = new Editor(10, 10, window->w() - 2*10, window->h() - 2*10);
+
     window->resizable(window);
     window->end();
     window->show(argc, argv);

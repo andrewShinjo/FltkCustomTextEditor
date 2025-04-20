@@ -3,6 +3,8 @@
 
 #include <FL/Fl_Widget.H>
 #include <string>
+#include <vector>
+#include "./EditorChar.h"
 
 class Editor : public Fl_Widget
 {
@@ -13,6 +15,10 @@ class Editor : public Fl_Widget
 
         // Override
         void draw();
+
+        // Other
+
+        std::vector<EditorChar> calculatePositions();
 
     private:
 

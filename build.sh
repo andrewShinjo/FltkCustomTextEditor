@@ -1,1 +1,1 @@
-g++ `fltk-config --cxxflags` main.cpp src/editor.cpp `fltk-config --ldflags` -o main
+g++ `fltk-config --cxxflags` main.cpp src/EditorChar.cpp src/ReadOnlyEditor.cpp `fltk-config --ldflags` -o main
