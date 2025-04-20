@@ -10,6 +10,7 @@ Editor::Editor(int x, int y, int w, int h, const char *label)
     : Fl_Widget(x, y, w, h, label)
 {
     padding = 10;
+    viewportY = fl_height();
 
     std::ifstream inputFile("resources/declaration-of-independence.txt");
 
@@ -47,7 +48,7 @@ void Editor::draw()
             break;
         }
 
-        fl_draw(&c, 1, currentX, currentY); 
+        fl_draw(&c, 1, currentX, currentY-2*viewportY); 
     }
 
     // Draw scrollbar.
@@ -85,9 +86,7 @@ std::vector<EditorChar> Editor::calculatePositions()
     for(size_t i = 0; i < text.size(); i++)
     {
         char c = text[i];
-
         float charWidth = fl_width(c);
-
         bool cantFit = currentX + charWidth > rightBound;
         
         if(cantFit && currentX != leftBound)
