@@ -26,9 +26,12 @@ Editor::Editor(int x, int y, int w, int h, const char *label)
 void Editor::draw() 
 {
 
-    // Draw black border.
+    // Draw border.
+
     fl_color(FL_BLACK);
     fl_rect(x(), y(), w(), h());
+
+    // Draw text that's in the view.
 
     std::vector<EditorChar> positions = calculatePositions(); 
 
@@ -37,14 +40,33 @@ void Editor::draw()
         char c = position.getChar();
         int currentX = position.getX();
         int currentY = position.getY();
+        bool textOutOfView = currentY > y() + h() - padding;
 
-        if(currentY > y() + h())
+        if(textOutOfView)
         {
             break;
         }
 
         fl_draw(&c, 1, currentX, currentY); 
     }
+
+    // Draw scrollbar.
+
+    int textHeight = positions.back().getY() + fl_height() + padding;
+    int viewHeight = h();
+    bool scrollbarVisible = viewHeight < textHeight;
+
+    if(scrollbarVisible)
+    {
+        float ratio = static_cast<float>(viewHeight) / textHeight;
+        int scrollbarHeight = viewHeight*ratio;
+        int scrollbarWidth = 10;
+
+        fl_color(FL_RED);
+        fl_rectf(x() + w() - scrollbarWidth, y(), scrollbarWidth,
+            scrollbarHeight);
+    }
+    
 }
 
 // Other
