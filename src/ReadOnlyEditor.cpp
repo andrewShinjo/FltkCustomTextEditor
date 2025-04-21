@@ -55,7 +55,7 @@ void Editor::draw()
         char c = position.getChar();
         int currentX = position.getX();
         int currentY = position.getY();
-        bool textOutOfView = currentY > viewportY + y() + h();
+        bool textOutOfView = currentY > y() + h() - viewportY;
 
         /*
         if(textOutOfView)
@@ -64,7 +64,7 @@ void Editor::draw()
         }
         */
 
-        fl_draw(&c, 1, currentX, currentY+viewportY); 
+        fl_draw(&c, 1, currentX, currentY-viewportY); 
     }
 
     fl_pop_clip();
@@ -100,12 +100,15 @@ int Editor::handle(int event)
         {
             if(Fl::event_key() == FL_Enter)
             {
-                viewportY = std::min(0, viewportY + 12);
+                viewportY = std::max(0, viewportY - 12);
                 redraw();
             }
             if(Fl::event_key() == FL_Up)
             {
-                viewportY -= 12;
+                viewportY = std::min(
+                    documentLength - viewportLength, 
+                    viewportY + 12
+                );
                 redraw();
             }
             return 1;
