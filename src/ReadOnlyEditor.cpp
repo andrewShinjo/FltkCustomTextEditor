@@ -1,4 +1,5 @@
 #include <FL/fl_draw.H>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,8 +10,8 @@
 Editor::Editor(int x, int y, int w, int h, const char *label)
     : Fl_Widget(x, y, w, h, label)
 {
-    padding = 10;
     viewportY = 0;
+    viewportLength = h;
 
     std::ifstream inputFile("resources/declaration-of-independence.txt");
 
@@ -26,6 +27,7 @@ Editor::Editor(int x, int y, int w, int h, const char *label)
 
 void Editor::draw() 
 {
+
     // Clear drawing
 
     fl_color(FL_WHITE);
@@ -42,13 +44,18 @@ void Editor::draw()
     fl_push_clip(x(), y(), w(), h());
 
     std::vector<EditorChar> positions = calculatePositions(); 
+    documentLength = positions.back().getY() + fl_height() - y();
+
+    std::cout << "viewportY: " << viewportY << std::endl
+              << "viewportLength: " << viewportLength << std::endl
+              << "documentLength: " << documentLength << std::endl;
 
     for(EditorChar position : positions)
     {
         char c = position.getChar();
         int currentX = position.getX();
         int currentY = position.getY();
-        bool textOutOfView = currentY > viewportY + y() + h() - padding;
+        bool textOutOfView = currentY > viewportY + y() + h();
 
         /*
         if(textOutOfView)
@@ -64,7 +71,7 @@ void Editor::draw()
 
     // Draw scrollbar.
 
-    int textHeight = positions.back().getY() + fl_height() + padding;
+    int textHeight = positions.back().getY() + fl_height();
     int viewHeight = h();
     bool scrollbarVisible = viewHeight < textHeight;
 
@@ -85,16 +92,15 @@ int Editor::handle(int event)
 {
     switch(event)
     {
-        case FL_FOCUS:
+        case FL_FOCUS: // need FL_FOCUS to listen for keypress.
         {
-            std::cout << "Focus" << std::endl;
             return 1;
         }
         case FL_KEYBOARD:
         {
             if(Fl::event_key() == FL_Enter)
             {
-                viewportY += 12;
+                viewportY = std::min(0, viewportY + 12);
                 redraw();
             }
             if(Fl::event_key() == FL_Up)
@@ -118,11 +124,11 @@ std::vector<EditorChar> Editor::calculatePositions()
 
     std::vector<EditorChar> result;
 
-    int leftBound = x() + padding;
-    int rightBound = x() + w() - padding;
+    int leftBound = x();
+    int rightBound = x() + w();
 
-    int currentX = x() + padding;
-    int currentY = y() + padding + fl_height();
+    int currentX = x();
+    int currentY = y() + fl_height();
     
     for(size_t i = 0; i < text.size(); i++)
     {

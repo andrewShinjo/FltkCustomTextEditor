@@ -23,8 +23,9 @@ class Editor : public Fl_Widget
 
     private:
 
-        unsigned int padding;
-        size_t viewportY;
+        int viewportY;
+        int viewportLength;
+        int documentLength;
         std::string text;
 };
 
