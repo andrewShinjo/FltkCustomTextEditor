@@ -10,7 +10,7 @@ Editor::Editor(int x, int y, int w, int h, const char *label)
     : Fl_Widget(x, y, w, h, label)
 {
     padding = 10;
-    viewportY = fl_height();
+    viewportY = 0;
 
     std::ifstream inputFile("resources/declaration-of-independence.txt");
 
@@ -26,6 +26,9 @@ Editor::Editor(int x, int y, int w, int h, const char *label)
 
 void Editor::draw() 
 {
+    fl_color(FL_WHITE);
+    box(FL_FLAT_BOX);
+    fl_rectf(x(), y(), w(), h());
 
     // Draw border.
 
@@ -41,14 +44,14 @@ void Editor::draw()
         char c = position.getChar();
         int currentX = position.getX();
         int currentY = position.getY();
-        bool textOutOfView = currentY > y() + h() - padding;
+        bool textOutOfView = currentY > viewportY + y() + h() - padding;
 
         if(textOutOfView)
         {
             break;
         }
 
-        fl_draw(&c, 1, currentX, currentY-2*viewportY); 
+        fl_draw(&c, 1, currentX, currentY+viewportY); 
     }
 
     // Draw scrollbar.
@@ -68,6 +71,31 @@ void Editor::draw()
             scrollbarHeight);
     }
     
+}
+
+int Editor::handle(int event)
+{
+    switch(event)
+    {
+        case FL_FOCUS:
+        {
+            std::cout << "Focus" << std::endl;
+            return 1;
+        }
+        case FL_KEYBOARD:
+        {
+            if(Fl::event_key() == FL_Enter)
+            {
+                viewportY += 12;
+                redraw();
+            }
+            return 1;
+        }
+        default:
+        {
+            return 0;            
+        }
+    }
 }
 
 // Other

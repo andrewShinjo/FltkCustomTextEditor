@@ -14,7 +14,8 @@ class Editor : public Fl_Widget
         Editor(int x, int y, int w, int h, const char *label = 0);
 
         // Override
-        void draw();
+        void draw() override;
+        int handle(int event) override;
 
         // Other
 
