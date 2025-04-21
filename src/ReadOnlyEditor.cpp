@@ -11,7 +11,6 @@ Editor::Editor(int x, int y, int w, int h, const char *label)
     : Fl_Widget(x, y, w, h, label)
 {
     viewportY = 0;
-    viewportLength = h;
 
     std::ifstream inputFile("resources/declaration-of-independence.txt");
 
@@ -45,6 +44,7 @@ void Editor::draw()
 
     std::vector<EditorChar> positions = calculatePositions(); 
     documentLength = positions.back().getY() + fl_height() - y();
+    viewportLength = h();
 
     std::cout << "viewportY: " << viewportY << std::endl
               << "viewportLength: " << viewportLength << std::endl
@@ -100,11 +100,20 @@ int Editor::handle(int event)
         {
             if(Fl::event_key() == FL_Enter)
             {
+                if(viewportLength >= documentLength)
+                {
+                    return 1;
+                }
                 viewportY = std::max(0, viewportY - 12);
                 redraw();
             }
-            if(Fl::event_key() == FL_Up)
+            else if(Fl::event_key() == FL_Up)
             {
+                if(viewportLength >= documentLength)
+                {
+                    return 1;
+                }
+
                 viewportY = std::min(
                     documentLength - viewportLength, 
                     viewportY + 12
