@@ -26,6 +26,8 @@ Editor::Editor(int x, int y, int w, int h, const char *label)
 
 void Editor::draw() 
 {
+    // Clear drawing
+
     fl_color(FL_WHITE);
     box(FL_FLAT_BOX);
     fl_rectf(x(), y(), w(), h());
@@ -37,6 +39,8 @@ void Editor::draw()
 
     // Draw text that's in the view.
 
+    fl_push_clip(x(), y(), w(), h());
+
     std::vector<EditorChar> positions = calculatePositions(); 
 
     for(EditorChar position : positions)
@@ -46,13 +50,17 @@ void Editor::draw()
         int currentY = position.getY();
         bool textOutOfView = currentY > viewportY + y() + h() - padding;
 
+        /*
         if(textOutOfView)
         {
             break;
         }
+        */
 
         fl_draw(&c, 1, currentX, currentY+viewportY); 
     }
+
+    fl_pop_clip();
 
     // Draw scrollbar.
 
@@ -87,6 +95,11 @@ int Editor::handle(int event)
             if(Fl::event_key() == FL_Enter)
             {
                 viewportY += 12;
+                redraw();
+            }
+            if(Fl::event_key() == FL_Up)
+            {
+                viewportY -= 12;
                 redraw();
             }
             return 1;
