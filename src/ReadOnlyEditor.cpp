@@ -46,10 +46,6 @@ void Editor::draw()
     documentLength = positions.back().getY() + fl_height() - y();
     viewportLength = h();
 
-    std::cout << "yDisplacement: " << yDisplacement << std::endl
-              << "viewportLength: " << viewportLength << std::endl
-              << "documentLength: " << documentLength << std::endl;
-
     for(EditorChar position : positions)
     {
         char c = position.getChar();
@@ -73,12 +69,6 @@ void Editor::draw()
             = (viewportLength*viewportLength) / documentLength;
         int scrollbarWidth = 10;
 
-        std::cout << "scrollbarHeight: " << scrollbarHeight
-                  << std::endl;
-        std::cout << "scrollbarY: "
-            << ((yDisplacement*viewportLength) / documentLength) 
-            << std::endl;
-
         fl_color(FL_RED);
         fl_rectf(
             x() + w() - scrollbarWidth, 
@@ -101,7 +91,7 @@ int Editor::handle(int event)
         }
         case FL_KEYBOARD:
         {
-            if(Fl::event_key() == FL_Enter)
+            if(Fl::event_key() == FL_Up)
             {
                 if(viewportLength >= documentLength)
                 {
@@ -110,7 +100,7 @@ int Editor::handle(int event)
                 yDisplacement = std::max(0, yDisplacement - 12);
                 redraw();
             }
-            else if(Fl::event_key() == FL_Up)
+            else if(Fl::event_key() == FL_Down)
             {
                 if(viewportLength >= documentLength)
                 {

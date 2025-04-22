@@ -9,10 +9,6 @@ int main(int argc, char **argv)
 {
     int screenHeight = Fl::h(), screenWidth = Fl::w();
 
-    std::cout << "screenHeight: "   << screenHeight 
-              << ", screenWidth: "  << screenWidth
-              << std::endl;
-
     Fl_Window *window 
         = new Fl_Window(screenWidth / 2, screenHeight / 2, "Text Editor");
     Editor *e 
