@@ -23,7 +23,7 @@ class Editor : public Fl_Widget
 
     private:
 
-        int viewportY;
+        int yDisplacement;
         int viewportLength;
         int documentLength;
         std::string text;

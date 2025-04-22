@@ -10,7 +10,7 @@
 Editor::Editor(int x, int y, int w, int h, const char *label)
     : Fl_Widget(x, y, w, h, label)
 {
-    viewportY = 0;
+    yDisplacement = 0;
 
     std::ifstream inputFile("resources/declaration-of-independence.txt");
 
@@ -46,7 +46,7 @@ void Editor::draw()
     documentLength = positions.back().getY() + fl_height() - y();
     viewportLength = h();
 
-    std::cout << "viewportY: " << viewportY << std::endl
+    std::cout << "yDisplacement: " << yDisplacement << std::endl
               << "viewportLength: " << viewportLength << std::endl
               << "documentLength: " << documentLength << std::endl;
 
@@ -55,19 +55,10 @@ void Editor::draw()
         char c = position.getChar();
         int currentX = position.getX();
         int currentY = position.getY();
-        bool textOutOfView = currentY > y() + h() - viewportY;
+        bool textOutOfView = currentY > y() + h() - yDisplacement;
 
-        /*
-        if(textOutOfView)
-        {
-            break;
-        }
-        */
-
-        fl_draw(&c, 1, currentX, currentY-viewportY); 
+        fl_draw(&c, 1, currentX, currentY-yDisplacement); 
     }
-
-    fl_pop_clip();
 
     // Draw scrollbar.
 
@@ -77,15 +68,27 @@ void Editor::draw()
 
     if(scrollbarVisible)
     {
-        float ratio = static_cast<float>(viewHeight) / textHeight;
-        int scrollbarHeight = viewHeight*ratio;
+
+        int scrollbarHeight 
+            = (viewportLength*viewportLength) / documentLength;
         int scrollbarWidth = 10;
 
+        std::cout << "scrollbarHeight: " << scrollbarHeight
+                  << std::endl;
+        std::cout << "scrollbarY: "
+            << ((yDisplacement*viewportLength) / documentLength) 
+            << std::endl;
+
         fl_color(FL_RED);
-        fl_rectf(x() + w() - scrollbarWidth, y(), scrollbarWidth,
-            scrollbarHeight);
+        fl_rectf(
+            x() + w() - scrollbarWidth, 
+            y() + ((yDisplacement*viewportLength) / documentLength),
+            scrollbarWidth,
+            scrollbarHeight
+        );
     }
     
+    fl_pop_clip();
 }
 
 int Editor::handle(int event)
@@ -104,7 +107,7 @@ int Editor::handle(int event)
                 {
                     return 1;
                 }
-                viewportY = std::max(0, viewportY - 12);
+                yDisplacement = std::max(0, yDisplacement - 12);
                 redraw();
             }
             else if(Fl::event_key() == FL_Up)
@@ -114,9 +117,9 @@ int Editor::handle(int event)
                     return 1;
                 }
 
-                viewportY = std::min(
+                yDisplacement = std::min(
                     documentLength - viewportLength, 
-                    viewportY + 12
+                    yDisplacement + 12
                 );
                 redraw();
             }
